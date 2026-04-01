@@ -1,114 +1,116 @@
 <!DOCTYPE html><html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rifa Profissional</title>
-  <style>
-    body { font-family: Arial; background: #f3e8ff; margin: 0; text-align: center; }
-    header { background: #a855f7; color: white; padding: 15px; }
-    .container { padding: 20px; }
-    .grid { display: grid; grid-template-columns: repeat(10,1fr); gap:10px; max-width:500px; margin:20px auto; }
-    .number { padding: 12px; border-radius: 8px; border:2px solid #a855f7; background:white; cursor:pointer; }
-    .selected { background:#c084fc; color:white; }
-    .sold { background:#ddd; color:#666; cursor:not-allowed; }
-    input { padding:8px; margin:5px; border-radius:6px; border:1px solid #ccc; }
-    button { padding:10px; margin:5px; border:none; border-radius:6px; background:#a855f7; color:white; cursor:pointer; }
-    .painel { margin-top:30px; background:white; padding:15px; border-radius:10px; max-width:500px; margin-left:auto; margin-right:auto; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Letí Personalizados</title>
+<style>
+body{
+    margin:0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(to bottom right, #ffe6f0, #f3e6ff);
+    color:#333;
+    text-align:center;
+}
+header{
+    padding:60px 20px;
+    background: linear-gradient(to right, #ffb6d9, #e6b3ff);
+    color:white;
+}
+h1{
+    font-size:38px;
+}
+.subtitle{
+    font-size:18px;
+    margin-top:10px;
+}
+.hero{
+    font-size:20px;
+    margin-top:15px;
+}
+button{
+    padding:12px 25px;
+    border:none;
+    border-radius:25px;
+    cursor:pointer;
+    font-weight:bold;
+}
+.btn-primary{
+    background:#9c27b0;
+    color:white;
+}
+.btn-whats{
+    background:white;
+    border:2px solid #9c27b0;
+    color:#9c27b0;
+}
+.container{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:20px;
+    padding:20px;
+}
+.card{
+    background:white;
+    padding:20px;
+    width:260px;
+    border-radius:20px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+.price{
+    color:#e91e63;
+    font-weight:bold;
+    margin:10px 0;
+}
+footer{
+    margin-top:40px;
+    padding:20px;
+    font-size:14px;
+    color:#777;
+}
+.admin{
+    display:none;
+    background:#fff0f6;
+    padding:20px;
+    margin:20px;
+    border-radius:15px;
+}
+</style>
 </head>
-<body><header>🎁 Rifa Dia das Mães - R$5</header><div class="container">
-  <h3>💜 Cesta de Guloseimas</h3>  <div class="grid" id="grid"></div>  <p>Selecionados: <span id="sel">Nenhum</span></p>
-  <p>Total: R$ <span id="total">0</span></p><button onclick="enviarWhats()">Reservar via WhatsApp</button>
-
-</div><div class="painel">
-  <h3>🔐 Painel Administrativo</h3>
-  <input id="nome" placeholder="Nome do comprador">
-  <input id="zap" placeholder="WhatsApp">
-  <br>
-  <button onclick="confirmarVenda()">Confirmar venda</button>
-  <button onclick="resetar()">Resetar tudo</button>  <p id="resumo"></p>
-</div><script>
-let selected = [];
-let dados = JSON.parse(localStorage.getItem("rifaDados")) || {};
-
-const grid = document.getElementById("grid");
-
-function salvar() {
-  localStorage.setItem("rifaDados", JSON.stringify(dados));
+<body><header>
+<h1>💖 Letí Personalizados 💖</h1>
+<p class="subtitle">Arquivos digitais feitos com amor</p>
+<p class="hero">🌸 Feliz Dia das Mães 🌸<br>
+Para aquela que faz tudo com amor, carinho e dedicação 💕</p>
+</header><h2>🎁 Rifa Especial Dia das Mães</h2>
+<p>📅 Sorteio: <strong>07/05</strong></p><div class="container"><div class="card">
+<h3>🎀 Número da Rifa</h3>
+<p>Garanta seu número e concorra a uma cesta especial 💝</p>
+<div class="price">R$5,00</div>
+<button class="btn-primary" onclick="comprar()">Comprar</button>
+<br><br>
+<button class="btn-whats" onclick="whats()">Falar no WhatsApp</button>
+</div></div><div class="admin" id="adminPanel">
+<h3>🔒 Painel Administrativo</h3>
+<p>Aqui você pode futuramente controlar números vendidos 😉</p>
+</div><footer>
+👩‍👧 Feito com carinho para o Dia das Mães 💕<br>
+© 2026 Letí Personalizados
+</footer><script>
+function whats(){
+    var numero = "5599999999999";
+    var mensagem = "Olá, quero participar da rifa de Dia das Mães!";
+    window.open("https://wa.me/" + numero + "?text=" + encodeURIComponent(mensagem));
 }
 
-function render() {
-  grid.innerHTML = "";
-
-  for (let i=1;i<=100;i++){
-    let div = document.createElement("div");
-    div.innerText = i;
-    div.className = "number";
-
-    if(dados[i]){
-      div.classList.add("sold");
-    } else {
-      div.onclick = ()=>{
-        if(selected.includes(i)){
-          selected = selected.filter(n=>n!==i);
-          div.classList.remove("selected");
-        } else {
-          selected.push(i);
-          div.classList.add("selected");
-        }
-        atualizar();
-      }
-    }
-
-    grid.appendChild(div);
-  }
-
-  atualizarResumo();
+function comprar(){
+    alert("Aqui você pode colocar seu link do Mercado Pago ou Pix 😊");
 }
 
-function atualizar(){
-  document.getElementById("sel").innerText = selected.length?selected.join(", "):"Nenhum";
-  document.getElementById("total").innerText = selected.length*5;
+// PAINEL ADMIN (só você acessa com senha simples)
+var senha = prompt("Digite a senha para acessar o painel (ou cancelar):");
+if(senha === "1234"){
+    document.getElementById("adminPanel").style.display = "block";
 }
-
-function confirmarVenda(){
-  if(selected.length===0) return alert("Selecione números");
-
-  let nome = document.getElementById("nome").value;
-  let zap = document.getElementById("zap").value;
-
-  selected.forEach(n=>{
-    dados[n] = {nome,zap};
-  });
-
-  salvar();
-  selected=[];
-  document.getElementById("nome").value="";
-  document.getElementById("zap").value="";
-  render();
-}
-
-function atualizarResumo(){
-  let vendidos = Object.keys(dados).length;
-  document.getElementById("resumo").innerText = `Vendidos: ${vendidos}/100`;
-}
-
-function enviarWhats(){
-  if(selected.length===0) return alert("Selecione números");
-
-  let msg = `Olá! Quero os números: ${selected.join(", ")} - Total R$${selected.length*5}`;
-  let url = `https://wa.me/5549988732255?text=${encodeURIComponent(msg)}`;
-  window.open(url);
-}
-
-function resetar(){
-  if(confirm("Tem certeza?")){
-    localStorage.clear();
-    dados={};
-    render();
-  }
-}
-
-render();
 </script></body>
 </html>
