@@ -1,116 +1,161 @@
-<!DOCTYPE html><html lang="pt-br">
+<!DOCTYPE html>
+<html lang="pt-br">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Letí Personalizados</title>
+<title>Rifa Dia das Mães</title>
+
 <style>
 body{
     margin:0;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Arial;
     background: linear-gradient(to bottom right, #ffe6f0, #f3e6ff);
-    color:#333;
     text-align:center;
 }
+
 header{
-    padding:60px 20px;
+    padding:40px;
     background: linear-gradient(to right, #ffb6d9, #e6b3ff);
     color:white;
 }
-h1{
-    font-size:38px;
+
+.grid{
+    display:grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap:8px;
+    padding:20px;
 }
-.subtitle{
-    font-size:18px;
-    margin-top:10px;
-}
-.hero{
-    font-size:20px;
-    margin-top:15px;
-}
-button{
-    padding:12px 25px;
-    border:none;
-    border-radius:25px;
+
+.number{
+    background:white;
+    padding:15px;
+    border-radius:10px;
     cursor:pointer;
     font-weight:bold;
 }
-.btn-primary{
-    background:#9c27b0;
+
+.number:hover{
+    background:#f8bbd0;
+}
+
+.selected{
+    background:#ff80ab !important;
     color:white;
 }
+
+.sold{
+    background:#9e9e9e !important;
+    color:white;
+    cursor:not-allowed;
+}
+
+button{
+    padding:12px 25px;
+    border:none;
+    border-radius:20px;
+    margin:10px;
+    cursor:pointer;
+}
+
+.btn-pay{
+    background:#4caf50;
+    color:white;
+}
+
 .btn-whats{
     background:white;
     border:2px solid #9c27b0;
     color:#9c27b0;
 }
-.container{
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:center;
-    gap:20px;
-    padding:20px;
-}
-.card{
-    background:white;
-    padding:20px;
-    width:260px;
-    border-radius:20px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.1);
-}
-.price{
-    color:#e91e63;
-    font-weight:bold;
-    margin:10px 0;
-}
-footer{
-    margin-top:40px;
-    padding:20px;
-    font-size:14px;
-    color:#777;
-}
-.admin{
-    display:none;
-    background:#fff0f6;
-    padding:20px;
-    margin:20px;
-    border-radius:15px;
-}
 </style>
 </head>
-<body><header>
-<h1>💖 Letí Personalizados 💖</h1>
-<p class="subtitle">Arquivos digitais feitos com amor</p>
-<p class="hero">🌸 Feliz Dia das Mães 🌸<br>
-Para aquela que faz tudo com amor, carinho e dedicação 💕</p>
-</header><h2>🎁 Rifa Especial Dia das Mães</h2>
-<p>📅 Sorteio: <strong>07/05</strong></p><div class="container"><div class="card">
-<h3>🎀 Número da Rifa</h3>
-<p>Garanta seu número e concorra a uma cesta especial 💝</p>
-<div class="price">R$5,00</div>
-<button class="btn-primary" onclick="comprar()">Comprar</button>
-<br><br>
-<button class="btn-whats" onclick="whats()">Falar no WhatsApp</button>
-</div></div><div class="admin" id="adminPanel">
-<h3>🔒 Painel Administrativo</h3>
-<p>Aqui você pode futuramente controlar números vendidos 😉</p>
-</div><footer>
-👩‍👧 Feito com carinho para o Dia das Mães 💕<br>
-© 2026 Letí Personalizados
-</footer><script>
-function whats(){
-    var numero = "5599999999999";
-    var mensagem = "Olá, quero participar da rifa de Dia das Mães!";
-    window.open("https://wa.me/" + numero + "?text=" + encodeURIComponent(mensagem));
+
+<body>
+
+<header>
+<h1>💖 Rifa Dia das Mães 💖</h1>
+<p>Escolha seus números 💕</p>
+<p>📅 Sorteio: 07/05</p>
+</header>
+
+<div class="grid" id="grid"></div>
+
+<div>
+<button class="btn-pay" onclick="pagar()">💳 Pagar Agora</button>
+<button class="btn-whats" onclick="enviarWhats()">🟢 Reservar no WhatsApp</button>
+</div>
+
+<script>
+const total = 100;
+let selected = [];
+let vendidos = JSON.parse(localStorage.getItem("vendidos")) || [];
+
+const grid = document.getElementById("grid");
+
+for(let i=1;i<=total;i++){
+    const div = document.createElement("div");
+    div.classList.add("number");
+    div.innerText = i;
+
+    if(vendidos.includes(i)){
+        div.classList.add("sold");
+    }
+
+    div.onclick = () => {
+        if(vendidos.includes(i)) return;
+
+        if(selected.includes(i)){
+            selected = selected.filter(n => n !== i);
+            div.classList.remove("selected");
+        } else {
+            selected.push(i);
+            div.classList.add("selected");
+        }
+    };
+
+    grid.appendChild(div);
 }
 
-function comprar(){
-    alert("Aqui você pode colocar seu link do Mercado Pago ou Pix 😊");
+function enviarWhats(){
+    if(selected.length === 0){
+        alert("Escolha pelo menos um número!");
+        return;
+    }
+
+    const numero = "55499988732255";
+    const msg = `Olá! Quero reservar esses números da rifa: ${selected.join(", ")}`;
+
+    window.open(`https://wa.me/${numero}?text=${encodeURIComponent(msg)}`);
 }
 
-// PAINEL ADMIN (só você acessa com senha simples)
-var senha = prompt("Digite a senha para acessar o painel (ou cancelar):");
+function pagar(){
+    if(selected.length === 0){
+        alert("Escolha pelo menos um número!");
+        return;
+    }
+
+    const chavePix = "d123d204-e146-4eac-bf17-107da1762010";
+    const msg = `Chave Pix: ${chavePix}\nNúmeros escolhidos: ${selected.join(", ")}`;
+
+    alert("Copie e pague via Pix:\n\n" + msg);
+}
+
+// ADMIN
+function marcarComoVendido(numeros){
+    vendidos = [...vendidos, ...numeros];
+    localStorage.setItem("vendidos", JSON.stringify(vendidos));
+    location.reload();
+}
+
+let senha = prompt("Senha admin:");
 if(senha === "1234"){
-    document.getElementById("adminPanel").style.display = "block";
+    let nums = prompt("Números pagos (ex: 1, 5, 20):");
+    if(nums){
+        let lista = nums.split(",").map(n => parseInt(n.trim()));
+        marcarComoVendido(lista);
+    }
 }
-</script></body>
+</script>
+
+</body>
 </html>
